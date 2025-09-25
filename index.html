@@ -1,321 +1,160 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>达芬奇智染 - 智能染发解决方案</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-        }
-        
-        body {
-            background-color: #0a0a0a;
-            color: #f0f0f0;
-            overflow-x: hidden;
-        }
-        
-        .fullscreen-section {
-            height: 100vh;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .fullscreen-img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            background-color: #1a1a1a;
-        }
-        
-        .logo {
-            position: fixed;
-            top: 30px;
-            left: 30px;
-            z-index: 1000;
-            font-size: 1.8rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #8a2be2, #4b0082);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .scroll-indicator {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            color: #8a2be2;
-            font-size: 2rem;
-            animation: bounce 2s infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateX(-50%) translateY(0);
-            }
-            40% {
-                transform: translateX(-50%) translateY(-10px);
-            }
-            60% {
-                transform: translateX(-50%) translateY(-5px);
-            }
-        }
-        
-        .nav-dots {
-            position: fixed;
-            right: 30px;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .dot.active {
-            background-color: #8a2be2;
-            transform: scale(1.3);
-        }
-        
-        .contact-overlay {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 1000;
-            background: rgba(138, 43, 226, 0.8);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .contact-overlay:hover {
-            background: rgba(138, 43, 226, 1);
-            transform: scale(1.05);
-        }
-        
-        .loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #0a0a0a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            transition: opacity 0.5s ease;
-        }
-        
-        .loading.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(138, 43, 226, 0.3);
-            border-radius: 50%;
-            border-top-color: #8a2be2;
-            animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            .logo {
-                font-size: 1.5rem;
-                top: 20px;
-                left: 20px;
-            }
-            
-            .nav-dots {
-                right: 20px;
-            }
-            
-            .contact-overlay {
-                bottom: 20px;
-                right: 20px;
-            }
-            
-            .fullscreen-img {
-                object-fit: cover;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>纯图片官网</title>
+  <style>
+    /* 重置样式 */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body, html { height: 100%; scroll-behavior: smooth; font-family: Arial, sans-serif; }
+
+    /* 全屏图片 */
+    section {
+      height: 100vh;
+      width: 100%;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    /* 加载动画 */
+    .loader {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #333;
+      border-radius: 50%;
+      width: 40px; height: 40px;
+      animation: spin 1s linear infinite;
+      z-index: 9999;
+    }
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    /* 导航点 */
+    .nav-dots {
+      position: fixed;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 1000;
+    }
+    .nav-dots a {
+      width: 12px;
+      height: 12px;
+      background: #aaa;
+      border-radius: 50%;
+      display: block;
+      transition: background 0.3s;
+    }
+    .nav-dots a.active,
+    .nav-dots a:hover {
+      background: #333;
+    }
+
+    /* 页脚备案信息 */
+    footer {
+      background: #f9f9f9;
+      padding: 15px 0;
+      font-size: 14px;
+      color: #666;
+    }
+
+      footer {
+        background: #f2f2f2;      /* ✅ 浅灰背景，参考图片 */
+        padding: 15px 0;
+        font-size: 14px;
+        color: #666;
+      }
+
+      .footer-content {
+        width: 90%;
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: center;   /* 居中排布 */
+        align-items: center;
+        gap: 10px;                 /* 控制间距 */
+      }
+
+      .footer-content span {
+        white-space: nowrap;
+      }
+
+      .footer-content a {
+        color: #0066cc;
+        text-decoration: none;
+      }
+
+      .footer-content a:hover {
+        text-decoration: underline;
+      }
+
+  </style>
 </head>
 <body>
-    <!-- 加载页面 -->
-    <div class="loading" id="loading">
-        <div class="spinner"></div>
-    </div>
-    
-    <!-- 品牌标识 -->
-    <div class="logo">达芬奇智染</div>
-    
-    <!-- 导航点 -->
-    <div class="nav-dots">
-        <div class="dot active" data-section="0"></div>
-        <div class="dot" data-section="1"></div>
-        <div class="dot" data-section="2"></div>
-        <div class="dot" data-section="3"></div>
-    </div>
-    
-    <!-- 滚动指示器 -->
-    <div class="scroll-indicator">↓</div>
-    
-    <!-- 联系按钮 -->
-    <div class="contact-overlay">联系我们</div>
-    
-    <!-- 全屏图片部分 -->
-    <section class="fullscreen-section" id="section0">
-        <img src="http://image.davincidye.com/website/WechatIMG1231.jpg" alt="达芬奇智染" class="fullscreen-img" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMWExYTFhIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzhhMmJlMiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+RGFWaW5jaSBIYWlyIENvbG9yIFNvbHV0aW9uPC90ZXh0Pjwvc3ZnPg=='">
-    </section>
-    
-    <section class="fullscreen-section" id="section1">
-        <img src="http://image.davincidye.com/website/WechatIMG1232.jpg" alt="产品发展历程" class="fullscreen-img" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMWExYTFhIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzhhMmJlMiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+UHJvZHVjdCBUaW1lbGluZTwvdGV4dD48L3N2Zz4='">
-    </section>
-    
-    <section class="fullscreen-section" id="section2">
-        <img src="http://image.davincidye.com/website/WechatIMG1234.jpg" alt="智能染发解决方案" class="fullscreen-img" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMWExYTFhIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzhhMmJlMiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+U21hcnQgSGFpciBDb2xvciBTb2x1dGlvbjwvdGV4dD48L3N2Zz4='">
-    </section>
-    
-    <section class="fullscreen-section" id="section3">
-        <img src="http://image.davincidye.com/website/WechatIMG1235.jpg" alt="产品优势" class="fullscreen-img" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMWExYTFhIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzhhMmJlMiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+UHJvZHVjdCBBZHZhbnRhZ2VzPC90ZXh0Pjwvc3ZnPg=='">
-    </section>
 
-    <script>
-        // 等待所有图片加载完成
-        window.addEventListener('load', function() {
-            const loading = document.getElementById('loading');
-            const images = document.querySelectorAll('.fullscreen-img');
-            let loadedCount = 0;
-            
-            images.forEach(img => {
-                if (img.complete) {
-                    loadedCount++;
-                } else {
-                    img.addEventListener('load', () => {
-                        loadedCount++;
-                        if (loadedCount === images.length) {
-                            setTimeout(() => {
-                                loading.classList.add('hidden');
-                            }, 500);
-                        }
-                    });
-                    
-                    img.addEventListener('error', () => {
-                        loadedCount++;
-                        if (loadedCount === images.length) {
-                            setTimeout(() => {
-                                loading.classList.add('hidden');
-                            }, 500);
-                        }
-                    });
-                }
-            });
-            
-            // 如果所有图片已经加载完成
-            if (loadedCount === images.length) {
-                setTimeout(() => {
-                    loading.classList.add('hidden');
-                }, 500);
-            }
-        });
-        
-        // 平滑滚动到指定部分
-        function scrollToSection(sectionIndex) {
-            const section = document.getElementById(`section${sectionIndex}`);
-            section.scrollIntoView({ behavior: 'smooth' });
-            updateActiveDot(sectionIndex);
+  <!-- 加载动画 -->
+  <div class="loader"></div>
+
+  <!-- 全屏图片部分 -->
+  <section id="img1" style="background-image: url('http://image.davincidye.com/website/WechatIMG1231.jpg');"></section>
+  <section id="img2" style="background-image: url('http://image.davincidye.com/website/WechatIMG1232.jpg');"></section>
+  <section id="img3" style="background-image: url('http://image.davincidye.com/website/WechatIMG1234.jpg');"></section>
+  <section id="img4" style="background-image: url('http://image.davincidye.com/website/WechatIMG1235.jpg');"></section>
+
+  <!-- 右侧导航点 -->
+  <div class="nav-dots">
+    <a href="#img1"></a>
+    <a href="#img2"></a>
+    <a href="#img3"></a>
+    <a href="#img4"></a>
+  </div>
+
+  <!-- 备案号底栏 -->
+  <footer>
+    <div class="footer-content">
+      <span>Copyright © 2024-2025 深圳万色智匠智能科技有限公司</span>
+      <a href="https://beian.miit.gov.cn" target="_blank">粤ICP备2025436760号</a>
+    </div>
+  </footer>
+
+  <script>
+    // 图片加载完成后隐藏 loading，显示内容
+    window.addEventListener('load', () => {
+      document.querySelector('.loader').style.display = 'none';
+      document.querySelectorAll('section').forEach(sec => {
+        sec.style.opacity = 1;
+      });
+    });
+
+    // 监听滚动，高亮当前导航点
+    const sections = document.querySelectorAll('section');
+    const navDots = document.querySelectorAll('.nav-dots a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(sec => {
+        const top = sec.offsetTop;
+        if (pageYOffset >= top - window.innerHeight / 2) {
+          current = sec.getAttribute('id');
         }
-        
-        // 更新活动导航点
-        function updateActiveDot(activeIndex) {
-            document.querySelectorAll('.dot').forEach((dot, index) => {
-                if (index === activeIndex) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
-                }
-            });
+      });
+      navDots.forEach(dot => {
+        dot.classList.remove('active');
+        if (dot.getAttribute('href') === '#' + current) {
+          dot.classList.add('active');
         }
-        
-        // 导航点点击事件
-        document.querySelectorAll('.dot').forEach((dot, index) => {
-            dot.addEventListener('click', () => {
-                scrollToSection(index);
-            });
-        });
-        
-        // 联系按钮点击事件
-        document.querySelector('.contact-overlay').addEventListener('click', () => {
-            alert('请联系我们: info@davinci-hair.com');
-        });
-        
-        // 滚动监听
-        let isScrolling = false;
-        window.addEventListener('scroll', () => {
-            if (!isScrolling) {
-                isScrolling = true;
-                
-                setTimeout(() => {
-                    const sections = document.querySelectorAll('.fullscreen-section');
-                    const scrollPosition = window.scrollY + window.innerHeight / 2;
-                    
-                    sections.forEach((section, index) => {
-                        const sectionTop = section.offsetTop;
-                        const sectionBottom = sectionTop + section.offsetHeight;
-                        
-                        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-                            updateActiveDot(index);
-                        }
-                    });
-                    
-                    isScrolling = false;
-                }, 100);
-            }
-        });
-        
-        // 键盘导航支持
-        document.addEventListener('keydown', (e) => {
-            const sections = document.querySelectorAll('.fullscreen-section');
-            const currentSection = Array.from(sections).findIndex(section => {
-                const rect = section.getBoundingClientRect();
-                return rect.top >= 0 && rect.top < window.innerHeight;
-            });
-            
-            if (e.key === 'ArrowDown' && currentSection < sections.length - 1) {
-                scrollToSection(currentSection + 1);
-            } else if (e.key === 'ArrowUp' && currentSection > 0) {
-                scrollToSection(currentSection - 1);
-            }
-        });
-    </script>
+      });
+    });
+  </script>
+
 </body>
 </html>
