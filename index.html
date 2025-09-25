@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
   <title>纯图片官网</title>
   <style>
     /* 重置样式 */
@@ -15,9 +16,31 @@
       width: 100%;
       background-size: cover;
       background-position: center;
+      background-repeat: no-repeat;
       position: relative;
       opacity: 0;
       transition: opacity 1s ease;
+      background-color: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 图片加载失败时的占位符 */
+    section::before {
+      content: "图片加载中...";
+      color: #999;
+      font-size: 18px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+    }
+
+    /* 图片加载成功后隐藏占位符 */
+    section.loaded::before {
+      display: none;
     }
 
     /* 加载动画 */
@@ -62,42 +85,34 @@
 
     /* 页脚备案信息 */
     footer {
-      background: #f9f9f9;
+      background: #f2f2f2;
       padding: 15px 0;
       font-size: 14px;
       color: #666;
     }
 
-      footer {
-        background: #f2f2f2;      /* ✅ 浅灰背景，参考图片 */
-        padding: 15px 0;
-        font-size: 14px;
-        color: #666;
-      }
+    .footer-content {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
 
-      .footer-content {
-        width: 90%;
-        max-width: 1200px;
-        margin: 0 auto;
-        display: flex;
-        justify-content: center;   /* 居中排布 */
-        align-items: center;
-        gap: 10px;                 /* 控制间距 */
-      }
+    .footer-content span {
+      white-space: nowrap;
+    }
 
-      .footer-content span {
-        white-space: nowrap;
-      }
+    .footer-content a {
+      color: #0066cc;
+      text-decoration: none;
+    }
 
-      .footer-content a {
-        color: #0066cc;
-        text-decoration: none;
-      }
-
-      .footer-content a:hover {
-        text-decoration: underline;
-      }
-
+    .footer-content a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -105,11 +120,11 @@
   <!-- 加载动画 -->
   <div class="loader"></div>
 
-  <!-- 全屏图片部分 -->
-  <section id="img1" style="background-image: url('http://image.davincidye.com/website/WechatIMG1231.jpg');"></section>
-  <section id="img2" style="background-image: url('http://image.davincidye.com/website/WechatIMG1232.jpg');"></section>
-  <section id="img3" style="background-image: url('http://image.davincidye.com/website/WechatIMG1234.jpg');"></section>
-  <section id="img4" style="background-image: url('http://image.davincidye.com/website/WechatIMG1235.jpg');"></section>
+  <!-- 全屏图片部分 - 使用Vercel本地路径 -->
+  <section id="img1" data-bg="/images/WechatIMG1231.jpg"></section>
+  <section id="img2" data-bg="/images/WechatIMG1232.jpg"></section>
+  <section id="img3" data-bg="/images/WechatIMG1234.jpg"></section>
+  <section id="img4" data-bg="/images/WechatIMG1235.jpg"></section>
 
   <!-- 右侧导航点 -->
   <div class="nav-dots">
@@ -128,17 +143,62 @@
   </footer>
 
   <script>
-    // 图片加载完成后隐藏 loading，显示内容
-    window.addEventListener('load', () => {
+    // 图片预加载函数
+    function preloadImages() {
+      const sections = document.querySelectorAll('section');
+      let loadedCount = 0;
+      let totalImages = sections.length;
+
+      sections.forEach((section, index) => {
+        const imageUrl = section.getAttribute('data-bg');
+        const img = new Image();
+        
+        img.onload = function() {
+          section.style.backgroundImage = `url('${imageUrl}')`;
+          section.classList.add('loaded');
+          loadedCount++;
+          
+          if (loadedCount === totalImages) {
+            hideLoader();
+          }
+        };
+        
+        img.onerror = function() {
+          console.error(`图片加载失败: ${imageUrl}`);
+          section.style.backgroundImage = 'none';
+          section.style.backgroundColor = '#e0e0e0';
+          loadedCount++;
+          
+          if (loadedCount === totalImages) {
+            hideLoader();
+          }
+        };
+        
+        img.src = imageUrl;
+      });
+
+      // 设置超时
+      setTimeout(() => {
+        if (loadedCount < totalImages) {
+          hideLoader();
+        }
+      }, 5000);
+    }
+
+    function hideLoader() {
       document.querySelector('.loader').style.display = 'none';
       document.querySelectorAll('section').forEach(sec => {
         sec.style.opacity = 1;
       });
-    });
+    }
+
+    // 页面加载完成后开始预加载图片
+    window.addEventListener('load', preloadImages);
 
     // 监听滚动，高亮当前导航点
     const sections = document.querySelectorAll('section');
     const navDots = document.querySelectorAll('.nav-dots a');
+    
     window.addEventListener('scroll', () => {
       let current = '';
       sections.forEach(sec => {
@@ -147,6 +207,7 @@
           current = sec.getAttribute('id');
         }
       });
+      
       navDots.forEach(dot => {
         dot.classList.remove('active');
         if (dot.getAttribute('href') === '#' + current) {
