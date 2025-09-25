@@ -3,14 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="referrer" content="no-referrer">
   <title>纯图片官网</title>
   <style>
-    /* 重置样式 */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body, html { height: 100%; scroll-behavior: smooth; font-family: Arial, sans-serif; }
 
-    /* 全屏图片 */
     section {
       height: 100vh;
       width: 100%;
@@ -18,45 +15,6 @@
       background-position: center;
       background-repeat: no-repeat;
       position: relative;
-      opacity: 0;
-      transition: opacity 1s ease;
-      background-color: #f5f5f5;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* 图片加载失败时的占位符 */
-    section::before {
-      content: "图片加载中...";
-      color: #999;
-      font-size: 18px;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 1;
-    }
-
-    /* 图片加载成功后隐藏占位符 */
-    section.loaded::before {
-      display: none;
-    }
-
-    /* 加载动画 */
-    .loader {
-      position: fixed;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      border: 6px solid #f3f3f3;
-      border-top: 6px solid #333;
-      border-radius: 50%;
-      width: 40px; height: 40px;
-      animation: spin 1s linear infinite;
-      z-index: 9999;
-    }
-    @keyframes spin {
-      100% { transform: rotate(360deg); }
     }
 
     /* 导航点 */
@@ -83,50 +41,23 @@
       background: #333;
     }
 
-    /* 页脚备案信息 */
     footer {
       background: #f2f2f2;
       padding: 15px 0;
       font-size: 14px;
       color: #666;
-    }
-
-    .footer-content {
-      width: 90%;
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .footer-content span {
-      white-space: nowrap;
-    }
-
-    .footer-content a {
-      color: #0066cc;
-      text-decoration: none;
-    }
-
-    .footer-content a:hover {
-      text-decoration: underline;
+      text-align: center;
     }
   </style>
 </head>
 <body>
 
-  <!-- 加载动画 -->
-  <div class="loader"></div>
+  <!-- 直接使用CSS背景图片 -->
+  <section id="img1" style="background-image: url('/images/WechatIMG1231.jpg');"></section>
+  <section id="img2" style="background-image: url('/images/WechatIMG1232.jpg');"></section>
+  <section id="img3" style="background-image: url('/images/WechatIMG1234.jpg');"></section>
+  <section id="img4" style="background-image: url('/images/WechatIMG1235.jpg');"></section>
 
-  <!-- 全屏图片部分 - 使用Vercel本地路径 -->
-  <section id="img1" data-bg="/images/WechatIMG1231.jpg"></section>
-  <section id="img2" data-bg="/images/WechatIMG1232.jpg"></section>
-  <section id="img3" data-bg="/images/WechatIMG1234.jpg"></section>
-  <section id="img4" data-bg="/images/WechatIMG1235.jpg"></section>
-
-  <!-- 右侧导航点 -->
   <div class="nav-dots">
     <a href="#img1"></a>
     <a href="#img2"></a>
@@ -134,67 +65,14 @@
     <a href="#img4"></a>
   </div>
 
-  <!-- 备案号底栏 -->
   <footer>
-    <div class="footer-content">
+    <div>
       <span>Copyright © 2024-2025 深圳万色智匠智能科技有限公司</span>
       <a href="https://beian.miit.gov.cn" target="_blank">粤ICP备2025436760号</a>
     </div>
   </footer>
 
   <script>
-    // 图片预加载函数
-    function preloadImages() {
-      const sections = document.querySelectorAll('section');
-      let loadedCount = 0;
-      let totalImages = sections.length;
-
-      sections.forEach((section, index) => {
-        const imageUrl = section.getAttribute('data-bg');
-        const img = new Image();
-        
-        img.onload = function() {
-          section.style.backgroundImage = `url('${imageUrl}')`;
-          section.classList.add('loaded');
-          loadedCount++;
-          
-          if (loadedCount === totalImages) {
-            hideLoader();
-          }
-        };
-        
-        img.onerror = function() {
-          console.error(`图片加载失败: ${imageUrl}`);
-          section.style.backgroundImage = 'none';
-          section.style.backgroundColor = '#e0e0e0';
-          loadedCount++;
-          
-          if (loadedCount === totalImages) {
-            hideLoader();
-          }
-        };
-        
-        img.src = imageUrl;
-      });
-
-      // 设置超时
-      setTimeout(() => {
-        if (loadedCount < totalImages) {
-          hideLoader();
-        }
-      }, 5000);
-    }
-
-    function hideLoader() {
-      document.querySelector('.loader').style.display = 'none';
-      document.querySelectorAll('section').forEach(sec => {
-        sec.style.opacity = 1;
-      });
-    }
-
-    // 页面加载完成后开始预加载图片
-    window.addEventListener('load', preloadImages);
-
     // 监听滚动，高亮当前导航点
     const sections = document.querySelectorAll('section');
     const navDots = document.querySelectorAll('.nav-dots a');
