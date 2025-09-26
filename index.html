@@ -177,10 +177,10 @@
     <section id="img4" class="desktop-section" style="background-image: url('./images/WechatIMG1235.jpg');"></section>
 
     <div class="nav-dots">
-      <a href="#img1" title="首页"></a>
-      <a href="#img2" title="产品"></a>
-      <a href="#img3" title="技术"></a>
-      <a href="#img4" title="联系"></a>
+      <a href="javascript:void(0)" data-target="img1" title="首页"></a>
+      <a href="javascript:void(0)" data-target="img2" title="产品"></a>
+      <a href="javascript:void(0)" data-target="img3" title="技术"></a>
+      <a href="javascript:void(0)" data-target="img4" title="联系"></a>
     </div>
   </div>
 
@@ -210,12 +210,18 @@
       // 直接根据User Agent判断：有移动设备标识=移动端，无=桌面端
       document.body.className = isMobileDevice ? 'mobile' : 'desktop';
       
-      // 调试信息（可选，生产环境可删除）
-      console.log('Device Detection:');
-      console.log('- isMobileDevice:', isMobileDevice);
-      console.log('- screenWidth:', window.innerWidth);
-      console.log('- userAgent:', navigator.userAgent);
-      console.log('- finalMode:', isMobileDevice ? 'mobile' : 'desktop');
+      // 调试页面滚动能力
+      setTimeout(() => {
+        const bodyHeight = document.body.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const canScroll = bodyHeight > windowHeight;
+        
+        console.log('Page scroll info:');
+        console.log('- Body height:', bodyHeight);
+        console.log('- Window height:', windowHeight);
+        console.log('- Can scroll:', canScroll);
+        console.log('- Scroll difference:', bodyHeight - windowHeight);
+      }, 1000);
     }
 
     // 图片加载处理（仅移动端需要）
@@ -238,76 +244,64 @@
       const sections = document.querySelectorAll('.desktop-section');
       const navDots = document.querySelectorAll('.nav-dots a');
       
+      console.log('Navigation initialized: sections=', sections.length, 'dots=', navDots.length);
+      
+      // 手动激活第一个导航点
+      if (navDots.length > 0) {
+        navDots[0].classList.add('active');
+      }
+      
       function updateActiveNav() {
-        // 移动设备不执行导航点逻辑
         const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        
         if (isMobileDevice) return;
         
-        let current = '';
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+        const windowHeight = window.innerHeight;
         
-        console.log('=== Navigation Update ===');
-        console.log('scrollTop:', scrollTop);
-        console.log('windowHeight:', windowHeight);
-        
-        // 遍历所有sections，找到当前在视口中的section
-        sections.forEach((sec, index) => {
-          const rect = sec.getBoundingClientRect();
-          const top = sec.offsetTop;
-          const height = sec.offsetHeight;
-          
-          // 简化判断：当section的大部分在视口中时激活
-          const isInView = rect.top < windowHeight * 0.6 && rect.bottom > windowHeight * 0.4;
-          
-          console.log(`Section ${index + 1} (${sec.getAttribute('id')}):`);
-          console.log('  - offsetTop:', top);
-          console.log('  - height:', height);
-          console.log('  - rect.top:', rect.top);
-          console.log('  - rect.bottom:', rect.bottom);
-          console.log('  - isInView:', isInView);
-          
-          if (isInView) {
-            current = sec.getAttribute('id');
-          }
-        });
-        
-        // 如果没有找到匹配的section，使用简单的索引计算
-        if (!current && sections.length > 0 && windowHeight > 0) {
-          const sectionIndex = Math.floor(scrollTop / windowHeight);
-          if (sectionIndex >= 0 && sectionIndex < sections.length) {
-            current = sections[sectionIndex].getAttribute('id');
-            console.log('Using fallback logic, sectionIndex:', sectionIndex);
-          }
+        // 只在实际滚动时输出调试信息
+        if (scrollTop > 0) {
+          console.log('Scroll detected - scrollTop:', scrollTop, 'windowHeight:', windowHeight);
         }
         
-        console.log('Final currentSection:', current);
+        // 计算当前section索引
+        const sectionIndex = Math.floor(scrollTop / windowHeight);
+        let current = '';
+        
+        if (sectionIndex >= 0 && sectionIndex < sections.length) {
+          current = sections[sectionIndex].getAttribute('id');
+        } else if (sections.length > 0) {
+          current = sections[0].getAttribute('id');
+        }
         
         // 更新导航点
-        let activated = false;
         navDots.forEach(dot => {
           dot.classList.remove('active');
-          if (dot.getAttribute('href') === '#' + current) {
+          const targetId = dot.getAttribute('data-target');
+          if (targetId === current) {
             dot.classList.add('active');
-            activated = true;
           }
         });
-        
-        console.log('Dot activated:', activated);
-        console.log('===================');
       }
 
-      // 滚动监听
-      window.addEventListener('scroll', debounce(updateActiveNav, 10));
+      // 滚动监听 - 使用多种方式确保能捕获滚动事件
+      window.addEventListener('scroll', debounce(updateActiveNav, 50), { passive: true });
+      document.addEventListener('scroll', debounce(updateActiveNav, 50), { passive: true });
       window.addEventListener('load', updateActiveNav);
+      window.addEventListener('resize', debounce(updateActiveNav, 200));
+      
+      // 手动执行一次
+      updateActiveNav();
       
       // 平滑滚动
       navDots.forEach(dot => {
         dot.addEventListener('click', function(e) {
           e.preventDefault();
-          const targetId = this.getAttribute('href').substring(1);
+          e.stopPropagation();
+          
+          const targetId = this.getAttribute('data-target');
           const targetSection = document.getElementById(targetId);
+          
+          console.log('Nav dot clicked:', targetId);
           
           // 移动设备不启用平滑滚动到section
           const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -317,6 +311,11 @@
               behavior: 'smooth',
               block: 'start'
             });
+            
+            // 手动更新导航状态
+            setTimeout(() => {
+              updateActiveNav();
+            }, 100);
           }
         });
       });
@@ -360,7 +359,18 @@
     document.addEventListener('DOMContentLoaded', function() {
       detectDevice();
       handleImageLoad();
-      initDesktopNavigation();
+      
+      // 延迟初始化导航，确保页面完全加载
+      setTimeout(() => {
+        initDesktopNavigation();
+      }, 500);
+    });
+
+    // 页面完全加载后也执行一次
+    window.addEventListener('load', function() {
+      setTimeout(() => {
+        initDesktopNavigation();
+      }, 100);
     });
 
     // 监听窗口大小变化
