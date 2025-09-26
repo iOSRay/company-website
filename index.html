@@ -40,33 +40,7 @@
       position: relative;
     }
 
-    /* 桌面端导航点 */
-    .nav-dots {
-      position: fixed;
-      right: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      z-index: 1000;
-    }
-    
-    .nav-dots a {
-      width: 12px;
-      height: 12px;
-      background: rgba(170, 170, 170, 0.7);
-      border-radius: 50%;
-      display: block;
-      transition: all 0.3s ease;
-      border: 2px solid rgba(255, 255, 255, 0.8);
-    }
-    
-    .nav-dots a.active,
-    .nav-dots a:hover {
-      background: rgba(51, 51, 51, 0.9);
-      transform: scale(1.2);
-    }
+    /* 导航点样式 - 移除 */
 
     /* 移动端样式（包括手机和iPad） */
     @media (hover: none) and (pointer: coarse),
@@ -94,11 +68,6 @@
         object-fit: cover;
         object-position: center;
       }
-
-      /* 隐藏导航点 */
-      .nav-dots {
-        display: none;
-      }
     }
 
     /* 强制iPad显示移动端 */
@@ -111,10 +80,6 @@
 
       .mobile-view {
         display: block !important;
-      }
-
-      .nav-dots {
-        display: none !important;
       }
     }
 
@@ -175,13 +140,6 @@
     <section id="img2" class="desktop-section" style="background-image: url('./images/WechatIMG1232.jpg');"></section>
     <section id="img3" class="desktop-section" style="background-image: url('./images/WechatIMG1234.jpg');"></section>
     <section id="img4" class="desktop-section" style="background-image: url('./images/WechatIMG1235.jpg');"></section>
-
-    <div class="nav-dots">
-      <a href="javascript:void(0)" data-target="img1" title="首页"></a>
-      <a href="javascript:void(0)" data-target="img2" title="产品"></a>
-      <a href="javascript:void(0)" data-target="img3" title="技术"></a>
-      <a href="javascript:void(0)" data-target="img4" title="联系"></a>
-    </div>
   </div>
 
   <!-- 移动端视图 -->
