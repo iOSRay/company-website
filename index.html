@@ -211,12 +211,11 @@
       document.body.className = isMobileDevice ? 'mobile' : 'desktop';
       
       // 调试信息（可选，生产环境可删除）
-      console.log('Device Detection:', {
-        isMobileDevice,
-        screenWidth: window.innerWidth,
-        userAgent: navigator.userAgent,
-        finalMode: isMobileDevice ? 'mobile' : 'desktop'
-      });
+      console.log('Device Detection:');
+      console.log('- isMobileDevice:', isMobileDevice);
+      console.log('- screenWidth:', window.innerWidth);
+      console.log('- userAgent:', navigator.userAgent);
+      console.log('- finalMode:', isMobileDevice ? 'mobile' : 'desktop');
     }
 
     // 图片加载处理（仅移动端需要）
@@ -246,33 +245,57 @@
         if (isMobileDevice) return;
         
         let current = '';
-        const scrollTop = window.pageYOffset;
-        const windowHeight = window.innerHeight;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const windowHeight = window.innerHeight || document.documentElement.clientHeight;
         
-        sections.forEach(sec => {
+        console.log('=== Navigation Update ===');
+        console.log('scrollTop:', scrollTop);
+        console.log('windowHeight:', windowHeight);
+        
+        // 遍历所有sections，找到当前在视口中的section
+        sections.forEach((sec, index) => {
+          const rect = sec.getBoundingClientRect();
           const top = sec.offsetTop;
           const height = sec.offsetHeight;
           
-          // 当section在视口中心附近时激活
-          if (scrollTop >= top - windowHeight / 3 && 
-              scrollTop < top + height - windowHeight / 3) {
+          // 简化判断：当section的大部分在视口中时激活
+          const isInView = rect.top < windowHeight * 0.6 && rect.bottom > windowHeight * 0.4;
+          
+          console.log(`Section ${index + 1} (${sec.getAttribute('id')}):`);
+          console.log('  - offsetTop:', top);
+          console.log('  - height:', height);
+          console.log('  - rect.top:', rect.top);
+          console.log('  - rect.bottom:', rect.bottom);
+          console.log('  - isInView:', isInView);
+          
+          if (isInView) {
             current = sec.getAttribute('id');
           }
         });
         
-        // 调试信息
-        console.log('Scroll Debug:', {
-          scrollTop: scrollTop,
-          currentSection: current,
-          windowHeight: windowHeight
-        });
+        // 如果没有找到匹配的section，使用简单的索引计算
+        if (!current && sections.length > 0 && windowHeight > 0) {
+          const sectionIndex = Math.floor(scrollTop / windowHeight);
+          if (sectionIndex >= 0 && sectionIndex < sections.length) {
+            current = sections[sectionIndex].getAttribute('id');
+            console.log('Using fallback logic, sectionIndex:', sectionIndex);
+          }
+        }
         
+        console.log('Final currentSection:', current);
+        
+        // 更新导航点
+        let activated = false;
         navDots.forEach(dot => {
           dot.classList.remove('active');
           if (dot.getAttribute('href') === '#' + current) {
             dot.classList.add('active');
+            activated = true;
           }
         });
+        
+        console.log('Dot activated:', activated);
+        console.log('===================');
       }
 
       // 滚动监听
