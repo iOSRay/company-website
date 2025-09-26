@@ -29,6 +29,9 @@
     /* 桌面端：全屏滚动效果 */
     body.desktop {
       scroll-behavior: smooth;
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      height: 100vh;
     }
 
     .desktop-section {
@@ -38,6 +41,8 @@
       background-position: center;
       background-repeat: no-repeat;
       position: relative;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
     }
 
     /* 导航点样式 - 移除 */
@@ -206,8 +211,7 @@
     function initDesktopNavigation() {
       const sections = document.querySelectorAll('.desktop-section');
       const navDots = document.querySelectorAll('.nav-dots a');
-      
-      console.log('Navigation initialized: sections=', sections.length, 'dots=', navDots.length);
+
       
       // 手动激活第一个导航点
       if (navDots.length > 0) {
@@ -220,11 +224,6 @@
         
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         const windowHeight = window.innerHeight;
-        
-        // 只在实际滚动时输出调试信息
-        if (scrollTop > 0) {
-          console.log('Scroll detected - scrollTop:', scrollTop, 'windowHeight:', windowHeight);
-        }
         
         // 计算当前section索引
         const sectionIndex = Math.floor(scrollTop / windowHeight);
@@ -263,8 +262,6 @@
           
           const targetId = this.getAttribute('data-target');
           const targetSection = document.getElementById(targetId);
-          
-          console.log('Nav dot clicked:', targetId);
           
           // 移动设备不启用平滑滚动到section
           const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
