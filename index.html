@@ -203,27 +203,20 @@
   </footer>
 
   <script>
-    // 检测设备类型：手机和iPad显示移动端，PC(包括触摸屏PC)显示桌面端
+    // 检测设备类型：直接根据User Agent判断
     function detectDevice() {
-      // 检测真正的移动设备（手机、iPad等）
+      // 检测移动设备的User Agent
       const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       
-      // 检测小屏幕设备（主要针对手机和小平板）
-      const isSmallScreen = window.innerWidth <= 1024;
-      
-      // 综合判断：只有移动设备User Agent + 小屏幕才是移动端
-      // PC（包括触摸屏PC）都显示桌面端效果
-      const isMobile = isMobileDevice && isSmallScreen;
-      
-      document.body.className = isMobile ? 'mobile' : 'desktop';
+      // 直接根据User Agent判断：有移动设备标识=移动端，无=桌面端
+      document.body.className = isMobileDevice ? 'mobile' : 'desktop';
       
       // 调试信息（可选，生产环境可删除）
       console.log('Device Detection:', {
         isMobileDevice,
-        isSmallScreen,
         screenWidth: window.innerWidth,
         userAgent: navigator.userAgent,
-        finalMode: isMobile ? 'mobile' : 'desktop'
+        finalMode: isMobileDevice ? 'mobile' : 'desktop'
       });
     }
 
@@ -248,12 +241,10 @@
       const navDots = document.querySelectorAll('.nav-dots a');
       
       function updateActiveNav() {
-        // 只有移动设备+小屏幕才不执行导航点逻辑
+        // 移动设备不执行导航点逻辑
         const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const isSmallScreen = window.innerWidth <= 1024;
-        const isMobile = isMobileDevice && isSmallScreen;
         
-        if (isMobile) return;
+        if (isMobileDevice) return;
         
         let current = '';
         const scrollTop = window.pageYOffset;
@@ -288,12 +279,10 @@
           const targetId = this.getAttribute('href').substring(1);
           const targetSection = document.getElementById(targetId);
           
-          // 只有移动设备+小屏幕才不启用平滑滚动到section
+          // 移动设备不启用平滑滚动到section
           const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-          const isSmallScreen = window.innerWidth <= 1024;
-          const isMobile = isMobileDevice && isSmallScreen;
           
-          if (targetSection && !isMobile) {
+          if (targetSection && !isMobileDevice) {
             targetSection.scrollIntoView({
               behavior: 'smooth',
               block: 'start'
@@ -322,10 +311,8 @@
       
       // 移动端切换到桌面端时重置滚动位置
       const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      const isSmallScreen = window.innerWidth <= 1024;
-      const isMobile = isMobileDevice && isSmallScreen;
       
-      if (!isMobile) {
+      if (!isMobileDevice) {
         // 延迟执行，确保样式已切换
         setTimeout(() => {
           const sections = document.querySelectorAll('.desktop-section');
