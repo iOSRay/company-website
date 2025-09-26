@@ -34,28 +34,10 @@
     .desktop-section {
       height: 100vh;
       width: 100%;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
       position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .desktop-image-container {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .desktop-image-container img {
-      max-width: 100%;
-      max-height: 100%;
-      width: auto;
-      height: auto;
-      object-fit: contain;
-      display: block;
     }
 
     /* 桌面端导航点 */
@@ -156,13 +138,11 @@
     }
 
     /* 图片加载效果 */
-    .desktop-image-container img,
     .mobile-image {
       opacity: 0;
       transition: opacity 0.3s ease;
     }
 
-    .desktop-image-container img.loaded,
     .mobile-image.loaded {
       opacity: 1;
     }
@@ -172,29 +152,10 @@
 
   <!-- 桌面端视图 -->
   <div class="desktop-view">
-    <section id="img1" class="desktop-section">
-      <div class="desktop-image-container">
-        <img src="./images/WechatIMG1231.jpg" alt="公司介绍" loading="lazy">
-      </div>
-    </section>
-
-    <section id="img2" class="desktop-section">
-      <div class="desktop-image-container">
-        <img src="./images/WechatIMG1232.jpg" alt="产品展示" loading="lazy">
-      </div>
-    </section>
-
-    <section id="img3" class="desktop-section">
-      <div class="desktop-image-container">
-        <img src="./images/WechatIMG1234.jpg" alt="技术优势" loading="lazy">
-      </div>
-    </section>
-
-    <section id="img4" class="desktop-section">
-      <div class="desktop-image-container">
-        <img src="./images/WechatIMG1235.jpg" alt="联系我们" loading="lazy">
-      </div>
-    </section>
+    <section id="img1" class="desktop-section" style="background-image: url('./images/WechatIMG1231.jpg');"></section>
+    <section id="img2" class="desktop-section" style="background-image: url('./images/WechatIMG1232.jpg');"></section>
+    <section id="img3" class="desktop-section" style="background-image: url('./images/WechatIMG1234.jpg');"></section>
+    <section id="img4" class="desktop-section" style="background-image: url('./images/WechatIMG1235.jpg');"></section>
 
     <div class="nav-dots">
       <a href="#img1" title="首页"></a>
@@ -228,9 +189,9 @@
       document.body.className = isMobile ? 'mobile' : 'desktop';
     }
 
-    // 图片加载处理
+    // 图片加载处理（仅移动端需要）
     function handleImageLoad() {
-      const images = document.querySelectorAll('.desktop-image-container img, .mobile-image');
+      const images = document.querySelectorAll('.mobile-image');
       images.forEach(img => {
         img.addEventListener('load', function() {
           this.classList.add('loaded');
