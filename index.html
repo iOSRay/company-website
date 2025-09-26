@@ -25,7 +25,13 @@
       background-position: center;
       background-repeat: no-repeat;
       position: relative;
-      background-attachment: scroll; /* 修复iOS滚动问题 */
+      background-attachment: scroll;
+      /* iOS Safari 专用修复 */
+      -webkit-background-size: cover;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
     }
 
     /* 导航点 */
@@ -76,6 +82,30 @@
 
     /* 响应式断点 - 移动端图片自适应优化 */
     
+    /* iOS Safari 专用修复 */
+    @supports (-webkit-touch-callout: none) {
+      section {
+        height: 100vh;
+        height: -webkit-fill-available; /* iOS Safari viewport fix */
+        background-attachment: scroll !important;
+        background-size: cover !important;
+        background-position: center center !important;
+        -webkit-background-size: cover !important;
+        will-change: transform;
+        transform: translate3d(0, 0, 0);
+      }
+      
+      /* 强制iOS重绘背景 */
+      #img1, #img2, #img3, #img4 {
+        background-size: cover !important;
+        background-position: center center !important;
+        background-attachment: scroll !important;
+        -webkit-background-size: cover !important;
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+      }
+    }
+    
     /* 移动端适配 */
     @media (max-width: 768px) {
       .nav-dots {
@@ -89,21 +119,29 @@
       }
       
       section {
-        /* 关键：移动端背景图片自适应 */
-        background-size: cover;
-        background-position: center center;
-        background-attachment: scroll;
+        /* 移动端背景图片强制设置 */
+        background-size: cover !important;
+        background-position: center center !important;
+        background-attachment: scroll !important;
+        background-repeat: no-repeat !important;
         min-height: 100vh;
-        /* 强制重新计算背景 */
-        -webkit-background-size: cover;
-        -moz-background-size: cover;
-        -o-background-size: cover;
+        height: 100vh;
+        /* iOS专用 */
+        height: -webkit-fill-available;
+        /* 强制硬件加速 */
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+        will-change: transform;
       }
       
-      /* 确保图片在小屏幕上正确显示 */
+      /* 每个section单独强制设置 */
       #img1, #img2, #img3, #img4 {
         background-size: cover !important;
         background-position: center center !important;
+        background-attachment: scroll !important;
+        -webkit-background-size: cover !important;
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
       }
       
       footer {
@@ -118,8 +156,8 @@
       }
     }
     
-    /* 小屏手机适配 */
-    @media (max-width: 480px) {
+    /* iPhone 专用适配 */
+    @media (max-width: 480px) and (-webkit-min-device-pixel-ratio: 2) {
       .nav-dots {
         right: 10px;
         gap: 8px;
@@ -131,12 +169,21 @@
       }
       
       section {
-        /* 小屏幕特殊处理 */
-        background-size: cover;
-        background-position: center center;
-        width: 100vw;
-        min-height: 100vh;
+        /* iPhone 专用背景设置 */
+        background-size: cover !important;
+        background-position: center center !important;
+        background-attachment: scroll !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        height: -webkit-fill-available !important;
+        min-height: 100vh !important;
         overflow: hidden;
+        /* 强制GPU渲染 */
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        will-change: transform;
       }
       
       footer {
@@ -239,29 +286,100 @@
     
     window.addEventListener('scroll', requestTick);
     
-    // 移动端背景图片自适应处理
+    // 移动端背景图片自适应处理 - 针对iOS优化
     function adjustBackgroundImages() {
       const isMobile = window.innerWidth <= 768;
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
       const sections = document.querySelectorAll('section');
       
       sections.forEach(section => {
-        if (isMobile) {
-          // 移动端强制重新设置背景图片属性
+        if (isMobile || isIOS) {
+          // 获取当前背景图片URL
           const currentBg = section.style.backgroundImage;
+          
+          // iOS和移动端强制重新设置所有背景属性
           section.style.backgroundSize = 'cover';
           section.style.backgroundPosition = 'center center';
           section.style.backgroundRepeat = 'no-repeat';
-          // 触发重绘
-          section.style.transform = 'translateZ(0)';
+          section.style.backgroundAttachment = 'scroll';
+          
+          // iOS Safari专用属性
+          if (isIOS) {
+            section.style.webkitBackgroundSize = 'cover';
+            section.style.webkitTransform = 'translate3d(0, 0, 0)';
+            section.style.transform = 'translate3d(0, 0, 0)';
+            section.style.webkitBackfaceVisibility = 'hidden';
+            section.style.backfaceVisibility = 'hidden';
+            section.style.willChange = 'transform';
+            
+            // 强制重绘
+            section.offsetHeight;
+            
+            // 延迟重新设置背景图片
+            setTimeout(() => {
+              if (currentBg) {
+                section.style.backgroundImage = 'none';
+                section.offsetHeight; // 强制重排
+                section.style.backgroundImage = currentBg;
+              }
+            }, 100);
+          } else {
+            // 其他移动设备
+            section.style.transform = 'translateZ(0)';
+          }
         }
       });
     }
     
+    // iOS设备特殊处理
+    function iosViewportFix() {
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+        const sections = document.querySelectorAll('section');
+        sections.forEach(section => {
+          section.style.height = '100vh';
+          section.style.height = '-webkit-fill-available';
+        });
+      }
+    }
+    
     // 页面加载和窗口大小改变时调整
-    window.addEventListener('load', adjustBackgroundImages);
-    window.addEventListener('resize', adjustBackgroundImages);
+    window.addEventListener('load', () => {
+      adjustBackgroundImages();
+      iosViewportFix();
+    });
+    
+    window.addEventListener('resize', () => {
+      setTimeout(() => {
+        adjustBackgroundImages();
+        iosViewportFix();
+      }, 150);
+    });
+    
+    // iOS设备旋转特殊处理
     window.addEventListener('orientationchange', () => {
-      setTimeout(adjustBackgroundImages, 100);
+      setTimeout(() => {
+        adjustBackgroundImages();
+        iosViewportFix();
+        // iOS需要更长的延迟来处理orientation change
+      }, 300);
+    });
+    
+    // iOS页面进入前台时重新调整
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        setTimeout(adjustBackgroundImages, 100);
+      }
+    });
+    
+    // iOS Safari专用：页面滚动结束后重新调整
+    let scrollTimer;
+    window.addEventListener('scroll', () => {
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+        clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(() => {
+          adjustBackgroundImages();
+        }, 150);
+      }
     });
     
     // 平滑滚动到目标位置（兼容旧浏览器）
