@@ -12,35 +12,44 @@
     }
     
     body, html { 
-      height: 100%; 
-      scroll-behavior: smooth; 
       font-family: Arial, sans-serif; 
       overflow-x: hidden;
     }
 
-    section {
+    /* 桌面端样式 */
+    .desktop-view {
+      display: block;
+    }
+
+    .mobile-view {
+      display: none;
+    }
+
+    /* 桌面端：全屏滚动效果 */
+    body.desktop {
+      height: 100%;
+      scroll-behavior: smooth;
+    }
+
+    .desktop-section {
+      height: 100vh;
       width: 100%;
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
       padding: 20px;
     }
 
-    /* 图片容器 */
-    .image-container {
+    .desktop-image-container {
       width: 100%;
       height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-      position: absolute;
-      top: 0;
-      left: 0;
     }
 
-    .image-container img {
+    .desktop-image-container img {
       max-width: 100%;
       max-height: 100%;
       width: auto;
@@ -49,21 +58,21 @@
       display: block;
     }
 
-    /* 导航点 */
+    /* 桌面端导航点 */
     .nav-dots {
       position: fixed;
-      right: 15px;
+      right: 20px;
       top: 50%;
       transform: translateY(-50%);
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       z-index: 1000;
     }
     
     .nav-dots a {
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
       background: rgba(170, 170, 170, 0.7);
       border-radius: 50%;
       display: block;
@@ -77,10 +86,42 @@
       transform: scale(1.2);
     }
 
+    /* 移动端样式 */
+    @media (max-width: 768px) {
+      .desktop-view {
+        display: none;
+      }
+
+      .mobile-view {
+        display: block;
+      }
+
+      body {
+        scroll-behavior: smooth;
+      }
+
+      .mobile-container {
+        width: 100%;
+      }
+
+      .mobile-image {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: cover;
+        object-position: center;
+      }
+
+      /* 隐藏导航点 */
+      .nav-dots {
+        display: none;
+      }
+    }
+
     footer {
       background: #f2f2f2;
       padding: 15px 10px;
-      font-size: 12px;
+      font-size: 14px;
       color: #666;
       text-align: center;
       line-height: 1.4;
@@ -97,26 +138,9 @@
       text-decoration: underline;
     }
 
-    /* 移动端优化 */
     @media (max-width: 768px) {
-      .nav-dots {
-        right: 10px;
-        gap: 8px;
-      }
-      
-      .nav-dots a {
-        width: 8px;
-        height: 8px;
-        border-width: 1px;
-      }
-      
-      section {
-        min-height: 100vh;
-        padding: 10px;
-      }
-      
       footer {
-        font-size: 11px;
+        font-size: 12px;
         padding: 12px 8px;
       }
       
@@ -131,89 +155,63 @@
       }
     }
 
-    /* 超小屏幕优化 */
-    @media (max-width: 480px) {
-      .nav-dots {
-        right: 8px;
-      }
-      
-      section {
-        padding: 5px;
-      }
-      
-      footer {
-        font-size: 10px;
-        padding: 10px 5px;
-      }
-    }
-
-    /* 横屏优化 */
-    @media (orientation: landscape) and (max-height: 600px) {
-      section {
-        min-height: 100vh;
-      }
-      
-      .nav-dots {
-        gap: 6px;
-      }
-      
-      .nav-dots a {
-        width: 6px;
-        height: 6px;
-      }
-    }
-
-    /* 加载状态 */
-    .loading {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      font-size: 14px;
-      color: #666;
-    }
-
-    .image-container img {
+    /* 图片加载效果 */
+    .desktop-image-container img,
+    .mobile-image {
       opacity: 0;
       transition: opacity 0.3s ease;
     }
 
-    .image-container img.loaded {
+    .desktop-image-container img.loaded,
+    .mobile-image.loaded {
       opacity: 1;
     }
   </style>
 </head>
-<body>
+<body class="desktop">
 
-  <section id="img1">
-    <div class="image-container">
-      <img src="/images/WechatIMG1231.jpg" alt="公司介绍" loading="lazy">
+  <!-- 桌面端视图 -->
+  <div class="desktop-view">
+    <section id="img1" class="desktop-section">
+      <div class="desktop-image-container">
+        <img src="./images/WechatIMG1231.jpg" alt="公司介绍" loading="lazy">
+      </div>
+    </section>
+
+    <section id="img2" class="desktop-section">
+      <div class="desktop-image-container">
+        <img src="./images/WechatIMG1232.jpg" alt="产品展示" loading="lazy">
+      </div>
+    </section>
+
+    <section id="img3" class="desktop-section">
+      <div class="desktop-image-container">
+        <img src="./images/WechatIMG1234.jpg" alt="技术优势" loading="lazy">
+      </div>
+    </section>
+
+    <section id="img4" class="desktop-section">
+      <div class="desktop-image-container">
+        <img src="./images/WechatIMG1235.jpg" alt="联系我们" loading="lazy">
+      </div>
+    </section>
+
+    <div class="nav-dots">
+      <a href="#img1" title="首页"></a>
+      <a href="#img2" title="产品"></a>
+      <a href="#img3" title="技术"></a>
+      <a href="#img4" title="联系"></a>
     </div>
-  </section>
+  </div>
 
-  <section id="img2">
-    <div class="image-container">
-      <img src="/images/WechatIMG1232.jpg" alt="产品展示" loading="lazy">
+  <!-- 移动端视图 -->
+  <div class="mobile-view">
+    <div class="mobile-container">
+      <img src="./images/WechatIMG1231.jpg" alt="公司介绍" class="mobile-image" loading="lazy">
+      <img src="./images/WechatIMG1232.jpg" alt="产品展示" class="mobile-image" loading="lazy">
+      <img src="./images/WechatIMG1234.jpg" alt="技术优势" class="mobile-image" loading="lazy">
+      <img src="./images/WechatIMG1235.jpg" alt="联系我们" class="mobile-image" loading="lazy">
     </div>
-  </section>
-
-  <section id="img3">
-    <div class="image-container">
-      <img src="/images/WechatIMG1234.jpg" alt="技术优势" loading="lazy">
-    </div>
-  </section>
-
-  <section id="img4">
-    <div class="image-container">
-      <img src="/images/WechatIMG1235.jpg" alt="联系我们" loading="lazy">
-    </div>
-  </section>
-
-  <div class="nav-dots">
-    <a href="#img1" title="首页"></a>
-    <a href="#img2" title="产品"></a>
-    <a href="#img3" title="技术"></a>
-    <a href="#img4" title="联系"></a>
   </div>
 
   <footer>
@@ -224,68 +222,79 @@
   </footer>
 
   <script>
-    // 图片加载处理
-    const images = document.querySelectorAll('.image-container img');
-    images.forEach(img => {
-      img.addEventListener('load', function() {
-        this.classList.add('loaded');
-      });
-      
-      // 如果图片已经加载完成
-      if (img.complete) {
-        img.classList.add('loaded');
-      }
-    });
+    // 检测设备类型并设置body类
+    function detectDevice() {
+      const isMobile = window.innerWidth <= 768;
+      document.body.className = isMobile ? 'mobile' : 'desktop';
+    }
 
-    // 监听滚动，高亮当前导航点
-    const sections = document.querySelectorAll('section');
-    const navDots = document.querySelectorAll('.nav-dots a');
-    
-    function updateActiveNav() {
-      let current = '';
-      const scrollTop = window.pageYOffset;
-      const windowHeight = window.innerHeight;
-      
-      sections.forEach(sec => {
-        const top = sec.offsetTop;
-        const height = sec.offsetHeight;
+    // 图片加载处理
+    function handleImageLoad() {
+      const images = document.querySelectorAll('.desktop-image-container img, .mobile-image');
+      images.forEach(img => {
+        img.addEventListener('load', function() {
+          this.classList.add('loaded');
+        });
         
-        // 当section在视口中超过50%时激活
-        if (scrollTop >= top - windowHeight / 2 && 
-            scrollTop < top + height - windowHeight / 2) {
-          current = sec.getAttribute('id');
-        }
-      });
-      
-      navDots.forEach(dot => {
-        dot.classList.remove('active');
-        if (dot.getAttribute('href') === '#' + current) {
-          dot.classList.add('active');
+        // 如果图片已经加载完成
+        if (img.complete) {
+          img.classList.add('loaded');
         }
       });
     }
 
-    // 初始化和滚动监听
-    window.addEventListener('scroll', updateActiveNav);
-    window.addEventListener('load', updateActiveNav);
-    
-    // 平滑滚动增强
-    navDots.forEach(dot => {
-      dot.addEventListener('click', function(e) {
-        e.preventDefault();
-        const targetId = this.getAttribute('href').substring(1);
-        const targetSection = document.getElementById(targetId);
+    // 桌面端导航点功能
+    function initDesktopNavigation() {
+      const sections = document.querySelectorAll('.desktop-section');
+      const navDots = document.querySelectorAll('.nav-dots a');
+      
+      function updateActiveNav() {
+        if (window.innerWidth <= 768) return; // 移动端不执行
         
-        if (targetSection) {
-          targetSection.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }
-      });
-    });
+        let current = '';
+        const scrollTop = window.pageYOffset;
+        const windowHeight = window.innerHeight;
+        
+        sections.forEach(sec => {
+          const top = sec.offsetTop;
+          const height = sec.offsetHeight;
+          
+          if (scrollTop >= top - windowHeight / 2 && 
+              scrollTop < top + height - windowHeight / 2) {
+            current = sec.getAttribute('id');
+          }
+        });
+        
+        navDots.forEach(dot => {
+          dot.classList.remove('active');
+          if (dot.getAttribute('href') === '#' + current) {
+            dot.classList.add('active');
+          }
+        });
+      }
 
-    // 防抖函数优化性能
+      // 滚动监听
+      window.addEventListener('scroll', debounce(updateActiveNav, 10));
+      window.addEventListener('load', updateActiveNav);
+      
+      // 平滑滚动
+      navDots.forEach(dot => {
+        dot.addEventListener('click', function(e) {
+          e.preventDefault();
+          const targetId = this.getAttribute('href').substring(1);
+          const targetSection = document.getElementById(targetId);
+          
+          if (targetSection && window.innerWidth > 768) {
+            targetSection.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
+      });
+    }
+
+    // 防抖函数
     function debounce(func, wait) {
       let timeout;
       return function executedFunction(...args) {
@@ -298,12 +307,36 @@
       };
     }
 
-    // 使用防抖优化滚动监听
-    window.addEventListener('scroll', debounce(updateActiveNav, 10));
+    // 响应式处理
+    function handleResize() {
+      detectDevice();
+      
+      // 移动端切换到桌面端时重置滚动位置
+      if (window.innerWidth > 768) {
+        // 延迟执行，确保样式已切换
+        setTimeout(() => {
+          const sections = document.querySelectorAll('.desktop-section');
+          const navDots = document.querySelectorAll('.nav-dots a');
+          
+          if (sections.length > 0 && navDots.length > 0) {
+            // 滚动到第一个section
+            sections[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100);
+      }
+    }
 
-    // 处理设备旋转
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      detectDevice();
+      handleImageLoad();
+      initDesktopNavigation();
+    });
+
+    // 监听窗口大小变化
+    window.addEventListener('resize', debounce(handleResize, 250));
     window.addEventListener('orientationchange', function() {
-      setTimeout(updateActiveNav, 500);
+      setTimeout(handleResize, 500);
     });
   </script>
 
