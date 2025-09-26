@@ -37,7 +37,6 @@
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      background-attachment: fixed;
       position: relative;
     }
 
@@ -254,10 +253,18 @@
           const top = sec.offsetTop;
           const height = sec.offsetHeight;
           
-          if (scrollTop >= top - windowHeight / 2 && 
-              scrollTop < top + height - windowHeight / 2) {
+          // 当section在视口中心附近时激活
+          if (scrollTop >= top - windowHeight / 3 && 
+              scrollTop < top + height - windowHeight / 3) {
             current = sec.getAttribute('id');
           }
+        });
+        
+        // 调试信息
+        console.log('Scroll Debug:', {
+          scrollTop: scrollTop,
+          currentSection: current,
+          windowHeight: windowHeight
         });
         
         navDots.forEach(dot => {
