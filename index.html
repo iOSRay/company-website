@@ -90,6 +90,24 @@
       color: #666;
       text-align: center;
       line-height: 1.4;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* 桌面端footer样式 */
+    body.desktop footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(242, 242, 242, 0.9);
+      backdrop-filter: blur(5px);
+    }
+
+    /* 移动端footer样式 */
+    body.mobile footer {
+      position: static;
+      background: #f2f2f2;
     }
 
     footer a {
@@ -167,19 +185,6 @@
       
       // 直接根据User Agent判断：有移动设备标识=移动端，无=桌面端
       document.body.className = isMobileDevice ? 'mobile' : 'desktop';
-      
-      // 调试页面滚动能力
-      setTimeout(() => {
-        const bodyHeight = document.body.scrollHeight;
-        const windowHeight = window.innerHeight;
-        const canScroll = bodyHeight > windowHeight;
-        
-        console.log('Page scroll info:');
-        console.log('- Body height:', bodyHeight);
-        console.log('- Window height:', windowHeight);
-        console.log('- Can scroll:', canScroll);
-        console.log('- Scroll difference:', bodyHeight - windowHeight);
-      }, 1000);
     }
 
     // 图片加载处理（仅移动端需要）
