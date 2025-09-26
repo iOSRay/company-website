@@ -21,10 +21,19 @@
     section {
       height: 100vh;
       width: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .bg-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      position: relative;
       background-attachment: scroll;
       /* iOS Safari 专用修复 */
       -webkit-background-size: cover;
@@ -87,22 +96,16 @@
       section {
         height: 100vh;
         height: -webkit-fill-available; /* iOS Safari viewport fix */
+      }
+      
+      .bg-image {
         background-attachment: scroll !important;
         background-size: cover !important;
         background-position: center center !important;
         -webkit-background-size: cover !important;
         will-change: transform;
         transform: translate3d(0, 0, 0);
-      }
-      
-      /* 强制iOS重绘背景 */
-      #img1, #img2, #img3, #img4 {
-        background-size: cover !important;
-        background-position: center center !important;
-        background-attachment: scroll !important;
-        -webkit-background-size: cover !important;
         -webkit-transform: translate3d(0, 0, 0);
-        transform: translate3d(0, 0, 0);
       }
     }
     
@@ -119,29 +122,23 @@
       }
       
       section {
+        height: 100vh;
+        height: -webkit-fill-available;
+        min-height: 100vh;
+      }
+      
+      .bg-image {
         /* 移动端背景图片强制设置 */
         background-size: cover !important;
         background-position: center center !important;
         background-attachment: scroll !important;
         background-repeat: no-repeat !important;
-        min-height: 100vh;
-        height: 100vh;
         /* iOS专用 */
-        height: -webkit-fill-available;
+        -webkit-background-size: cover !important;
         /* 强制硬件加速 */
         -webkit-transform: translate3d(0, 0, 0);
         transform: translate3d(0, 0, 0);
         will-change: transform;
-      }
-      
-      /* 每个section单独强制设置 */
-      #img1, #img2, #img3, #img4 {
-        background-size: cover !important;
-        background-position: center center !important;
-        background-attachment: scroll !important;
-        -webkit-background-size: cover !important;
-        -webkit-transform: translate3d(0, 0, 0);
-        transform: translate3d(0, 0, 0);
       }
       
       footer {
@@ -169,15 +166,18 @@
       }
       
       section {
+        height: 100vh !important;
+        height: -webkit-fill-available !important;
+        min-height: 100vh !important;
+        width: 100vw !important;
+      }
+      
+      .bg-image {
         /* iPhone 专用背景设置 */
         background-size: cover !important;
         background-position: center center !important;
         background-attachment: scroll !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        height: -webkit-fill-available !important;
-        min-height: 100vh !important;
-        overflow: hidden;
+        -webkit-background-size: cover !important;
         /* 强制GPU渲染 */
         -webkit-transform: translate3d(0, 0, 0);
         transform: translate3d(0, 0, 0);
@@ -218,11 +218,19 @@
 </head>
 <body>
 
-  <!-- 直接使用CSS背景图片 -->
-  <section id="img1" style="background-image: url('/images/WechatIMG1231.jpg');"></section>
-  <section id="img2" style="background-image: url('/images/WechatIMG1232.jpg');"></section>
-  <section id="img3" style="background-image: url('/images/WechatIMG1234.jpg');"></section>
-  <section id="img4" style="background-image: url('/images/WechatIMG1235.jpg');"></section>
+  <!-- 使用img标签确保移动端图片正确显示 -->
+  <section id="img1">
+    <div class="bg-image" style="background-image: url('/images/WechatIMG1231.jpg');"></div>
+  </section>
+  <section id="img2">
+    <div class="bg-image" style="background-image: url('/images/WechatIMG1232.jpg');"></div>
+  </section>
+  <section id="img3">
+    <div class="bg-image" style="background-image: url('/images/WechatIMG1234.jpg');"></div>
+  </section>
+  <section id="img4">
+    <div class="bg-image" style="background-image: url('/images/WechatIMG1235.jpg');"></div>
+  </section>
 
   <!-- 桌面端和移动端通用导航点 -->
   <div class="nav-dots">
@@ -290,42 +298,42 @@
     function adjustBackgroundImages() {
       const isMobile = window.innerWidth <= 768;
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-      const sections = document.querySelectorAll('section');
+      const bgImages = document.querySelectorAll('.bg-image');
       
-      sections.forEach(section => {
+      bgImages.forEach(bgImage => {
         if (isMobile || isIOS) {
           // 获取当前背景图片URL
-          const currentBg = section.style.backgroundImage;
+          const currentBg = bgImage.style.backgroundImage;
           
           // iOS和移动端强制重新设置所有背景属性
-          section.style.backgroundSize = 'cover';
-          section.style.backgroundPosition = 'center center';
-          section.style.backgroundRepeat = 'no-repeat';
-          section.style.backgroundAttachment = 'scroll';
+          bgImage.style.backgroundSize = 'cover';
+          bgImage.style.backgroundPosition = 'center center';
+          bgImage.style.backgroundRepeat = 'no-repeat';
+          bgImage.style.backgroundAttachment = 'scroll';
           
           // iOS Safari专用属性
           if (isIOS) {
-            section.style.webkitBackgroundSize = 'cover';
-            section.style.webkitTransform = 'translate3d(0, 0, 0)';
-            section.style.transform = 'translate3d(0, 0, 0)';
-            section.style.webkitBackfaceVisibility = 'hidden';
-            section.style.backfaceVisibility = 'hidden';
-            section.style.willChange = 'transform';
+            bgImage.style.webkitBackgroundSize = 'cover';
+            bgImage.style.webkitTransform = 'translate3d(0, 0, 0)';
+            bgImage.style.transform = 'translate3d(0, 0, 0)';
+            bgImage.style.webkitBackfaceVisibility = 'hidden';
+            bgImage.style.backfaceVisibility = 'hidden';
+            bgImage.style.willChange = 'transform';
             
             // 强制重绘
-            section.offsetHeight;
+            bgImage.offsetHeight;
             
             // 延迟重新设置背景图片
             setTimeout(() => {
               if (currentBg) {
-                section.style.backgroundImage = 'none';
-                section.offsetHeight; // 强制重排
-                section.style.backgroundImage = currentBg;
+                bgImage.style.backgroundImage = 'none';
+                bgImage.offsetHeight; // 强制重排
+                bgImage.style.backgroundImage = currentBg;
               }
-            }, 100);
+            }, 50);
           } else {
             // 其他移动设备
-            section.style.transform = 'translateZ(0)';
+            bgImage.style.transform = 'translateZ(0)';
           }
         }
       });
@@ -352,7 +360,7 @@
       setTimeout(() => {
         adjustBackgroundImages();
         iosViewportFix();
-      }, 150);
+      }, 100);
     });
     
     // iOS设备旋转特殊处理
@@ -360,25 +368,13 @@
       setTimeout(() => {
         adjustBackgroundImages();
         iosViewportFix();
-        // iOS需要更长的延迟来处理orientation change
-      }, 300);
+      }, 200);
     });
     
     // iOS页面进入前台时重新调整
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden) {
-        setTimeout(adjustBackgroundImages, 100);
-      }
-    });
-    
-    // iOS Safari专用：页面滚动结束后重新调整
-    let scrollTimer;
-    window.addEventListener('scroll', () => {
-      if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
-        clearTimeout(scrollTimer);
-        scrollTimer = setTimeout(() => {
-          adjustBackgroundImages();
-        }, 150);
+      if (!document.hidden && /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+        setTimeout(adjustBackgroundImages, 50);
       }
     });
     
