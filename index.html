@@ -16,13 +16,17 @@
       scroll-behavior: smooth; 
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       overflow-x: hidden;
+      margin: 0;
+      padding: 0;
     }
 
     section {
       height: 100vh;
-      width: 100%;
+      width: 100vw;
       position: relative;
       overflow: hidden;
+      margin: 0;
+      padding: 0;
     }
     
     .bg-image {
@@ -31,11 +35,18 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-size: cover;
+      background-size: contain; /* 改为contain以显示完整图片 */
       background-position: center;
       background-repeat: no-repeat;
       background-attachment: scroll;
+      background-color: #f5f5f5; /* 添加背景色填充空白区域 */
       /* iOS Safari 专用修复 */
+      -webkit-background-size: contain;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }*/
       -webkit-background-size: cover;
       -webkit-transform: translateZ(0);
       transform: translateZ(0);
@@ -100,9 +111,10 @@
       
       .bg-image {
         background-attachment: scroll !important;
-        background-size: cover !important;
+        background-size: contain !important; /* 移动端显示完整图片 */
         background-position: center center !important;
-        -webkit-background-size: cover !important;
+        background-color: #f5f5f5 !important;
+        -webkit-background-size: contain !important;
         will-change: transform;
         transform: translate3d(0, 0, 0);
         -webkit-transform: translate3d(0, 0, 0);
@@ -128,13 +140,14 @@
       }
       
       .bg-image {
-        /* 移动端背景图片强制设置 */
-        background-size: cover !important;
+        /* 移动端优先显示完整图片 */
+        background-size: contain !important;
         background-position: center center !important;
         background-attachment: scroll !important;
         background-repeat: no-repeat !important;
+        background-color: #f5f5f5 !important; /* 背景色 */
         /* iOS专用 */
-        -webkit-background-size: cover !important;
+        -webkit-background-size: contain !important;
         /* 强制硬件加速 */
         -webkit-transform: translate3d(0, 0, 0);
         transform: translate3d(0, 0, 0);
@@ -150,6 +163,20 @@
         display: flex;
         flex-direction: column;
         gap: 5px;
+      }
+    }
+    
+    /* 如果希望某些情况下仍使用cover模式，可以添加这个类 */
+    .bg-image.cover-mode {
+      background-size: cover !important;
+      -webkit-background-size: cover !important;
+    }
+    
+    /* 横屏时可能需要cover模式以避免留白过多 */
+    @media (orientation: landscape) and (max-width: 768px) {
+      .bg-image {
+        background-size: cover !important;
+        -webkit-background-size: cover !important;
       }
     }
     
@@ -173,11 +200,12 @@
       }
       
       .bg-image {
-        /* iPhone 专用背景设置 */
-        background-size: cover !important;
+        /* iPhone 专用背景设置 - 显示完整图片 */
+        background-size: contain !important;
         background-position: center center !important;
         background-attachment: scroll !important;
-        -webkit-background-size: cover !important;
+        background-color: #f5f5f5 !important;
+        -webkit-background-size: contain !important;
         /* 强制GPU渲染 */
         -webkit-transform: translate3d(0, 0, 0);
         transform: translate3d(0, 0, 0);
@@ -306,14 +334,15 @@
           const currentBg = bgImage.style.backgroundImage;
           
           // iOS和移动端强制重新设置所有背景属性
-          bgImage.style.backgroundSize = 'cover';
+          bgImage.style.backgroundSize = 'contain'; // 改为contain
           bgImage.style.backgroundPosition = 'center center';
           bgImage.style.backgroundRepeat = 'no-repeat';
           bgImage.style.backgroundAttachment = 'scroll';
+          bgImage.style.backgroundColor = '#f5f5f5'; // 添加背景色
           
           // iOS Safari专用属性
           if (isIOS) {
-            bgImage.style.webkitBackgroundSize = 'cover';
+            bgImage.style.webkitBackgroundSize = 'contain'; // 改为contain
             bgImage.style.webkitTransform = 'translate3d(0, 0, 0)';
             bgImage.style.transform = 'translate3d(0, 0, 0)';
             bgImage.style.webkitBackfaceVisibility = 'hidden';
